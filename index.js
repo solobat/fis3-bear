@@ -135,16 +135,18 @@ var exports = module.exports = function(fis) {
 
     //自动产出 map.json
     .match('::package', {
-      postpackager: function(ret) {
-        var path = require('path')
-        var root = fis.project.getProjectPath();
-        var ns = fis.get('namespace');
-        var mapFile = ns ? (ns + '-map.json') : 'map.json';
-        var map = fis.file.wrap(path.join(root, mapFile));
-        map.setContent(JSON.stringify(ret.map, null, map.optimizer ? null : 4));
-        ret.pkg[map.subpath] = map;
-      }
+      postpackager: fis.plugin('bearmap',{
+
+      })
     }, weight);
+
+fis
+  .media('pubvm')
+  .match('::package', {
+      postpackager: fis.plugin('bearmap', {
+        pubvm: true
+      })
+    }, weight+1);
 
   // 在 prod 环境下，开启各种压缩和打包。
   fis
