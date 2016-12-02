@@ -142,9 +142,29 @@ var exports = module.exports = function(fis) {
 
 fis
   .media('pubvm')
+  .match('/page/demo/*.vm', {
+      release: false
+    }, weight)
+  .match('/test/page/demo/*', {
+      release: false
+    }, weight)
   .match('::package', {
       postpackager: fis.plugin('bearmap', {
-        pubvm: true
+          pubType: 'pubvm'
+      })
+        }, weight + 1);
+
+fis
+  .media('pubpage')
+  .match('/page/demo/*.vm', {
+      release: false
+    }, weight)
+  .match('/test/page/demo/*', {
+      release: false
+    }, weight)
+  .match('::package', {
+      postpackager: fis.plugin('bearmap', {
+          pubType: 'pubpage'
       })
     }, weight+1);
 
