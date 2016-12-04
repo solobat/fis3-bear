@@ -17,7 +17,9 @@ var exports = module.exports = function(fis) {
   var weightWithNs = -50; // 所有针对有 namespace 后设置的权重
 
   fis.set('namespace', '');
-  fis.set('statics', '/static');
+  fis.set('projName', '');
+  // fis.set('statics', '/static');
+  fis.set('statics', '/public');
   fis.set('templates', '/WEB-INF/views');
 
   // 默认捆绑 jello 的服务器。
@@ -70,7 +72,7 @@ var exports = module.exports = function(fis) {
     // 所有文件默认放 static 目录下面。
     // 后续会针对部分文件覆盖此配置。
     .match('**', {
-      release: '${statics}/${namespace}/$0'
+      release: '${statics}/${projName}/$0'
     }, weight)
 
     // 标记 components 、 page 和 widget 目录下面的 js 都是模块。
@@ -78,10 +80,13 @@ var exports = module.exports = function(fis) {
       isMod: true
     }, weight)
 
+    .match('/{components,widget}/**', {
+      release: '${statics}/${projName}/static/$0'
+    }, weight)
     // static 下面的文件直接发布到 $statics 目录。
     // 为了不多一层目录 static。
     .match('/static/(**)', {
-      release: '${statics}/${namespace}/$1'
+      release: '${statics}/${projName}/$0'
     }, weight)
 
     // test 目录原封不动发过去。
