@@ -145,19 +145,34 @@ var exports = module.exports = function(fis) {
       })
     }, weight);
 
-fis
-  .media('pubvm')
-  .match('/page/demo/*.vm', {
-      release: false
-    }, weight)
-  .match('/test/page/demo/*', {
-      release: false
-    }, weight)
-  .match('::package', {
-      postpackager: fis.plugin('bearmap', {
-          pubType: 'pubvm'
-      })
-        }, weight + 1);
+    fis
+        .media('pubvm')
+        .match('{*.md, package.json,component.json,server.conf, /test/**,/page/**}', {
+            release: false
+        }, weight)
+        .match('::package', {
+            postpackager: fis.plugin('bearmap', {
+                pubType: 'pubvm'
+            })
+        }, weight + 1)
+        .match('/page/(layout/**)', {
+            release: '${statics}/${projName}/$1'
+        }, weight)
+        .match('/page/layout/**.{vm}', {
+            release: false
+        }, weight)
+        .match('/widget/**.{vm,html}', {
+            release: '${statics}/${projName}/static/$0'
+        }, weight)
+        .match('{map.json,${namespace}-map.json}', {
+            release: '${statics}/${projName}/$0'
+        }, weight)
+        .match('*', {
+            deploy: fis.plugin('local-deliver', {
+                // to: 'output/pubvm/'
+                to: 'C:/Users/fengyang1/AppData/Local/.fis3-tmp/pub2/'
+            })
+        });
 
 fis
   .media('pubpage')
