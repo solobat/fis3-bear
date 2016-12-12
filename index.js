@@ -166,13 +166,8 @@ var exports = module.exports = function(fis) {
         }, weight)
         .match('{map.json,${namespace}-map.json}', {
             release: '${statics}/${projName}/$0'
-        }, weight)
-        .match('*', {
-            deploy: fis.plugin('local-deliver', {
-                // to: 'output/pubvm/'
-                to: fis.get('pubvmDir')
-            })
-        });
+        }, weight);
+        
 
 fis
   .media('pubpage')
@@ -207,6 +202,15 @@ fis
 
   // 当用户 fis-conf.js 加载后触发。
   fis.on('conf:loaded', function() {
+	  
+	fis.media('pubvm')
+		.match('*', {
+            deploy: fis.plugin('local-deliver', {
+                // to: 'output/pubvm/'
+                to: fis.get('pubvmDir')
+            })
+        });
+	  
     if (!fis.get('namespace'))return;
 
     fis.match('/{page,widget}/**.{jsp,vm,html}', {
