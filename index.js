@@ -170,7 +170,7 @@ var exports = module.exports = function(fis) {
         .match('*', {
             deploy: fis.plugin('local-deliver', {
                 // to: 'output/pubvm/'
-                to: 'C:/Users/fengyang1/AppData/Local/.fis3-tmp/pub2/'
+                to: fis.get('pubvmDir')
             })
         });
 
