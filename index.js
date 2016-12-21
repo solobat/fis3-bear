@@ -18,8 +18,8 @@ var exports = module.exports = function(fis) {
 
   fis.set('namespace', '');
   fis.set('projName', '');
-  // fis.set('statics', '/static');
-  fis.set('statics', '/public');
+  fis.set('statics', '/static');
+  fis.set('bearStatics', '/public');
   fis.set('templates', '/WEB-INF/views');
 
   // 默认捆绑 jello 的服务器。
@@ -72,7 +72,7 @@ var exports = module.exports = function(fis) {
     // 所有文件默认放 static 目录下面。
     // 后续会针对部分文件覆盖此配置。
     .match('**', {
-      release: '${statics}/${projName}/$0'
+      release: '${statics}/${namespace}/$0'
     }, weight)
 
     // 标记 components 、 page 和 widget 目录下面的 js 都是模块。
@@ -80,13 +80,10 @@ var exports = module.exports = function(fis) {
       isMod: true
     }, weight)
 
-    .match('/{components,widget}/**', {
-      release: '${statics}/${projName}/static/$0'
-    }, weight)
     // static 下面的文件直接发布到 $statics 目录。
     // 为了不多一层目录 static。
     .match('/static/(**)', {
-      release: '${statics}/${projName}/$0'
+      release: '${statics}/${namespace}/$1'
     }, weight)
 
     // test 目录原封不动发过去。
@@ -138,46 +135,76 @@ var exports = module.exports = function(fis) {
       release: false
     }, weight)
 
-    //自动产出 map.json
+    // 自动产出 map.json
     .match('::package', {
-      postpackager: fis.plugin('bearmap',{
-
-      })
+      postpackager: function(ret) {
+        var path = require('path')
+        var root = fis.project.getProjectPath();
+        var ns = fis.get('namespace');
+        var mapFile = ns ? (ns + '-map.json') : 'map.json';
+        var map = fis.file.wrap(path.join(root, mapFile));
+        map.setContent(JSON.stringify(ret.map, null, map.optimizer ? null : 4));
+        ret.pkg[map.subpath] = map;
+      }
     }, weight);
 
     fis
         .media('pubvm')
+        .match('**', {
+            release: '${bearStatics}/${projName}/$0'
+        }, weight)
+        .match('/{components,widget}/**', {
+            release: '${bearStatics}/${projName}/static/$0'
+        }, weight)
+        // static 下面的文件直接发布到 $bearStatics 目录。
+        // 为了不多一层目录 static。
+        .match('/static/(**)', {
+            release: '${bearStatics}/${projName}/$0'
+        }, weight)
+
         .match('{*.md, package.json,component.json,server.conf, /test/**,/page/**}', {
             release: false
         }, weight)
+
         .match('::package', {
             postpackager: fis.plugin('bearmap', {
                 pubType: 'pubvm'
             })
         }, weight + 1)
         .match('/page/(layout/**)', {
-            release: '${statics}/${projName}/$1'
+            release: '${bearStatics}/${projName}/$1'
         }, weight)
         .match('/page/layout/**.{vm}', {
             release: false
         }, weight)
         .match('/widget/**.{vm,html}', {
-            release: '${statics}/${projName}/static/$0'
+            release: '${bearStatics}/${projName}/static/$0'
         }, weight)
         .match('{map.json,${namespace}-map.json}', {
-            release: '${statics}/${projName}/$0'
+            release: '${bearStatics}/${projName}/$0'
         }, weight);
-        
+
 
 fis
   .media('pubpage')
-  .match('/page/demo/*.vm', {
+  .match('**', {
+        release: '${bearStatics}/${projName}/$0'
+    }, weight)
+    .match('/{components,widget}/**', {
+        release: '${bearStatics}/${projName}/static/$0'
+    }, weight)
+    // static 下面的文件直接发布到 $bearStatics 目录。
+    // 为了不多一层目录 static。
+    .match('/static/(**)', {
+        release: '${bearStatics}/${projName}/$0'
+    }, weight)
+    .match('/page/demo/*.vm', {
       release: false
     }, weight)
-  .match('/test/page/demo/*', {
+    .match('/test/page/demo/*', {
       release: false
     }, weight)
-  .match('::package', {
+    .match('::package', {
       postpackager: fis.plugin('bearmap', {
           pubType: 'pubpage'
       })
@@ -202,7 +229,7 @@ fis
 
   // 当用户 fis-conf.js 加载后触发。
   fis.on('conf:loaded', function() {
-	  
+
 	fis.media('pubvm')
 		.match('*', {
             deploy: fis.plugin('local-deliver', {
@@ -210,7 +237,7 @@ fis
                 to: fis.get('pubvmDir')
             })
         });
-	  
+
     if (!fis.get('namespace'))return;
 
     fis.match('/{page,widget}/**.{jsp,vm,html}', {
