@@ -45,7 +45,8 @@ var exports = module.exports = function (fis) {
         // 对 sass 文件默认支持。
         .match('*.{sass,scss}', {
             parser: fis.plugin('node-sass'),
-            rExt: '.css'
+            rExt: '.css',
+            useSprite: true
         }, weight)
 
         // 对 tmpl 文件，默认采用 utc 插件转换成 js 函数。
@@ -184,6 +185,11 @@ var exports = module.exports = function (fis) {
         fis
             .media('dev')
             .match('::package', {
+                spriter: fis.plugin('csssprites-plus', {
+                    margin: 10,
+                    layout: 'matrix',
+                    to: './img'
+                }),
                 postpackager: fis.plugin('bear', {
                     comb: fis.get('combSetting')
                 })
@@ -201,6 +207,11 @@ var exports = module.exports = function (fis) {
                 ]
             })
             .match('::package', {
+                spriter: fis.plugin('csssprites-plus', {
+                    margin: 10,
+                    layout: 'matrix',
+                    to: './img'
+                }),
                 postpackager: fis.plugin('bear', {
                     pubType: 'pubvm',
                     comb: fis.get('combSetting')
@@ -210,6 +221,11 @@ var exports = module.exports = function (fis) {
         fis
             .media('pubpage')
             .match('::package', {
+                spriter: fis.plugin('csssprites-plus', {
+                    margin: 10,
+                    layout: 'matrix',
+                    to: './img'
+                }),
                 postpackager: fis.plugin('bear', {
                     pubType: 'pubpage',
                     comb: fis.get('combSetting')
