@@ -23,9 +23,10 @@
   "homepage": "https://github.com/winnieBear/fis3-bear",
   "dependencies": {
     "fis3-parser-vmdeps": "*",
-    "fis3-postpackager-bearmap": "*",
+    "fis3-postpackager-bear": "*",
     "fis3-preprocessor-extlang": "1.1.8",
     "fis3-server-jello": "~0.0.6",
-    "fis3-hook-commonjs": "0.1.22"
+    "fis3-hook-commonjs": "0.1.22",
+    "fis3-deploy-filter": "^1.0.1"
   }
 }
