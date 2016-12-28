@@ -1,6 +1,6 @@
 {
   "name": "fis3-bear",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "fis3 bear",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/winnieBear/fis3-bear",
   "dependencies": {
     "fis3-parser-vmdeps": "*",
-    "fis3-postpackager-bear": "0.0.2",
+    "fis3-postpackager-bear": "0.0.3",
     "fis3-preprocessor-extlang": "1.1.8",
     "fis3-server-jello": "~0.0.6",
     "fis3-hook-commonjs": "0.1.22",
