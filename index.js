@@ -66,9 +66,10 @@ var exports = module.exports = function (fis) {
             preprocessor: fis.plugin('extlang')
         }, weight)
 
-    fis.match('*.{vm,js}', {
-        useSameNameRequire: true
-    })
+    fis
+        .match('*.{vm,js}', {
+            useSameNameRequire: true
+        })
         // 所有文件默认放 static 目录下面。
         // 后续会针对部分文件覆盖此配置。
         .match('**', {
@@ -136,6 +137,7 @@ var exports = module.exports = function (fis) {
         }, weight);
 
 
+
     fis
         .media('pubvm')
         // .match('*.js', {
@@ -184,6 +186,11 @@ var exports = module.exports = function (fis) {
 
         fis
             .media('dev')
+             //conf and hbs not release in dev mode
+            .match('**.{conf.json, hbs}', {
+                release: false
+            }, weight)
+
             .match('::package', {
                 spriter: fis.plugin('csssprites-plus', {
                     margin: 10,
