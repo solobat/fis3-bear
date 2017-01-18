@@ -131,6 +131,11 @@ var exports = module.exports = function (fis) {
             release: false
         }, weight)
 
+        // assets下面不需要产出的文件。
+        .match('/assets/**', {
+            release: false
+        }, weight)
+
         // 脚本也是。
         .match('**.{sh,bat}', {
             release: false
