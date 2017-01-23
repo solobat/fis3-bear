@@ -145,17 +145,6 @@ var exports = module.exports = function (fis) {
 
     fis
         .media('pubvm')
-        // .match('*.js', {
-        //     optimizer: fis.plugin('uglify-js')
-        // }, weight)
-
-        // .match('*.{scss, sass, less, css}', {
-        //     optimizer: fis.plugin('clean-css')
-        // }, weight)
-
-        // .match('*.png', {
-        //     optimizer: fis.plugin('png-compressor')
-        // }, weight)
         .match('/{components,widget}/**', {
             release: '/static/$0'
         }, weight)
@@ -173,21 +162,9 @@ var exports = module.exports = function (fis) {
         }, weight);
 
 
-    fis
-        .media('pubpage')
-        .match('/{components,widget}/**', {
-            release: '/static/$0'
-        }, weight)
-        .match('/page/demo/*.vm', {
-            release: false
-        }, weight)
-        .match('/test/page/demo/*', {
-            release: false
-        }, weight);
-
-
     // 当用户 fis-conf.js 加载后触发。
     fis.on('conf:loaded', function () {
+        var compress = fis.get('_compress_');
 
         fis
             .media('dev')
@@ -229,6 +206,22 @@ var exports = module.exports = function (fis) {
                     comb: fis.get('combSetting')
                 })
             }, weight + 1);
+
+        if (compress) {
+            fis
+                .media('pubvm')
+                .match('*.js', {
+                    optimizer: fis.plugin('uglify-js')
+                }, weight)
+
+                .match('*.{scss, sass, less, css}', {
+                    optimizer: fis.plugin('clean-css')
+                }, weight)
+
+                .match('*.png', {
+                    optimizer: fis.plugin('png-compressor')
+                }, weight);
+            }
 
         fis
             .media('pubpage')
